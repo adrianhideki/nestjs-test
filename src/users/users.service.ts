@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { User } from './user';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UserDto } from './dto/user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [
+  private users: UserDto[] = [
     { id: 1, name: 'John Doe', role: 'INTERN', email: '' },
     { id: 2, name: 'Jane Doe', role: 'ENGINEER', email: '' },
     { id: 3, name: 'Jim Doe', role: 'ADMIN', email: '' },
@@ -14,7 +16,7 @@ export class UsersService {
     { id: 8, name: 'Jake Doe', role: 'ENGINEER', email: '' },
   ];
 
-  public findAll(role?: 'INTERN' | 'ENGINEER' | 'ADMIN'): User[] {
+  public findAll(role?: 'INTERN' | 'ENGINEER' | 'ADMIN'): UserDto[] {
     if (!!role) {
       return this.users.filter((user) => user.role === role);
     }
@@ -22,11 +24,11 @@ export class UsersService {
     return this.users;
   }
 
-  public findOne(id: number): User | undefined {
+  public findOne(id: number): UserDto | undefined {
     return this.users.find((user) => user.id === id);
   }
 
-  public create(user: User): User {
+  public create(user: CreateUserDto): UserDto {
     const maxId = Math.max(...this.users.map((user) => user.id));
     const newUser = { ...user, id: maxId + 1 };
 
@@ -34,7 +36,7 @@ export class UsersService {
     return newUser;
   }
 
-  public update(id: number, user: User): User | undefined {
+  public update(id: number, user: UpdateUserDto): UserDto | undefined {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
@@ -45,7 +47,7 @@ export class UsersService {
     return this.users[index];
   }
 
-  public updatePartialy(id: number, user: Partial<User>): User | undefined {
+  public updatePartialy(id: number, user: Partial<UpdateUserDto>): UserDto | undefined {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
@@ -56,7 +58,7 @@ export class UsersService {
     return this.users[index];
   }
 
-  public delete(id: number): User | undefined {
+  public delete(id: number): UserDto | undefined {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {

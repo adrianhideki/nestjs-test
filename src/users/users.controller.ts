@@ -10,9 +10,11 @@ import {
   Post,
   Put,
   Query,
+  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from './user';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -40,7 +42,7 @@ export class UsersController {
   }
 
   @Post()
-  create(@Body() user: User) {
+  create(@Body(ValidationPipe) user: CreateUserDto) {
     return this.userService.create(user);
   }
 
@@ -51,7 +53,7 @@ export class UsersController {
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     id: number,
-    @Body() user: User,
+    @Body(ValidationPipe) user: UpdateUserDto,
   ) {
     return this.userService.update(id, user);
   }
@@ -63,7 +65,7 @@ export class UsersController {
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     id: number,
-    @Body() user: Partial<User>,
+    @Body(ValidationPipe) user: UpdateUserDto,
   ) {
     return this.userService.updatePartialy(id, user);
   }
