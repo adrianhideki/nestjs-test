@@ -19,7 +19,7 @@ export class MyLoggerService extends ConsoleLogger {
 
   async logToFile(entry: string): Promise<void> {
     const formattedEntry = `${new Date().toISOString()}\t${entry}`;
-    const logFilePath = path.join(__dirname, 'logs', 'app.log');
+    const logFilePath = path.join(__dirname, '..','logs', 'app.log');
 
     try {
       await fsPromises.mkdir(path.dirname(logFilePath), { recursive: true });
