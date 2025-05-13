@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -17,15 +17,27 @@ export class UsersService {
   ];
 
   public findAll(role?: 'INTERN' | 'ENGINEER' | 'ADMIN'): UserDto[] {
+    let result = this.users;
+
     if (!!role) {
-      return this.users.filter((user) => user.role === role);
+      result = this.users.filter((user) => user.role === role);
+    }
+
+    if (result.length === 0) {
+      throw new NotFoundException('No users found');
     }
 
     return this.users;
   }
 
-  public findOne(id: number): UserDto | undefined {
-    return this.users.find((user) => user.id === id);
+  public findOne(id: number): UserDto {
+    const result = this.users.find((user) => user.id === id);
+
+    if (!result) {
+      throw new NotFoundException('User not found');
+    }
+
+    return result;
   }
 
   public create(user: CreateUserDto): UserDto {
@@ -36,34 +48,38 @@ export class UsersService {
     return newUser;
   }
 
-  public update(id: number, user: UpdateUserDto): UserDto | undefined {
+  public update(id: number, user: UpdateUserDto): UserDto {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
-      return undefined;
+      throw new NotFoundException('User not found');
     }
 
     this.users[index] = { ...this.users[index], ...user };
     return this.users[index];
   }
 
-  public updatePartialy(id: number, user: Partial<UpdateUserDto>): UserDto | undefined {
+  public updatePartialy(
+    id: number,
+    user: Partial<UpdateUserDto>,
+  ): UserDto | undefined {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
-      return undefined;
+      throw new NotFoundException('User not found');
     }
 
     this.users[index] = { ...this.users[index], ...user };
     return this.users[index];
   }
 
-  public delete(id: number): UserDto | undefined {
+  public delete(id: number): UserDto {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
-      return undefined;
+      throw new NotFoundException('User not found');
     }
+
     const deletedUser = this.users[index];
     this.users.splice(index, 1);
     return deletedUser;
